@@ -55,13 +55,17 @@ frp 目前正在前期开发阶段，master 分支用于发布稳定版本，dev
 
 ![architecture](/doc/pic/architecture.png)
 
-## 使用示例
+## 使用方法
 
-根据对应的操作系统及架构，从 [Release](https://github.com/fatedier/frp/releases) 页面下载最新版本的程序。
+1、程序下载：根据对应的操作系统及架构，从 [Release](https://github.com/fatedier/frp/releases) 页面下载最新版本的程序并解压。
 
-将 **frps** 及 **frps.ini** 放到有公网 IP 的机器上。
+2、服务器端设置和运行：将 frps 及 frps.ini 放到有公网 IP 的机器上（即可提供外网访问的服务器如vps），并对frps文件增加执行权限（+x），同时根据自身需求修改frps.ini文件（需与客户端的frpc.ini文件对应匹配，在后续的示例文件中详述）。
+通过./frps -c ./frps.ini命令启动服务端
 
-将 **frpc** 及 **frpc.ini** 放到处于内网环境的机器上。
+3、客户端设置和运行：将 frpc 及 frpc.ini 放到处于内网环境的机器上（即你准备提供frp内网服务的机器，可以是nas、路由器或者linux、windows、Mac的计算机，可以是拟提供http或tcp等服务的本机，也可以是与其处于同一内网的其他机器，并对frpc文件增加执行权限（+x），同时根据自身需求修改frpc.ini文件（需与客户端的frps.ini文件对应匹配，在后续的示例文件中详述））。
+通过./frpc -c ./frpc.ini命令启动服务端
+
+【建议：鉴于大多数情况下服务器端和内网客户端的操作系统是不相同的，新用户可考虑先将不同操作系统对应的release版本程序都下载到本地并解压至对应的不同目录，然后再根据本地客户端操作系统和服务器端操作系统的实际情况上传frpc、frps文件到客户端和服务器端。】
 
 ### 通过 ssh 访问公司内网机器
 
