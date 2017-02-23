@@ -13,7 +13,7 @@ frp 是一个高性能的反向代理应用，可以帮助您轻松地进行内�
 * [2、开发状态](#2开发状态)
 * [3、架构](#3架构)
 * [4、使用方法](#4使用方法)
-* [5、配置文件frps.ini、frpc.ini的写法示例](#5配置文件frps.inifrpc.ini的写法示例)
+* [5、配置文件frps.ini、frpc.ini的写法示例](#5配置文件frpsinifrpcini的写法示例)
 * [使用示例](#使用示例)
     * [通过 ssh 访问公司内网机器](#通过-ssh-访问公司内网机器)
     * [通过自定义域名访问部署于内网的 web 服务](#通过自定义域名访问部署于内网的-web-服务)
@@ -84,7 +84,7 @@ frp 目前正在前期开发阶段，master 分支用于发布稳定版本，dev
 ### 5.4、混合模式
 ## 6、不同访问方式的配置文件写法
 ### 6.1、通过 ssh 访问公司内网机器
-
+  ```ini
   # frps.ini
   [common]
   bind_port = 7000
@@ -92,8 +92,10 @@ frp 目前正在前期开发阶段，master 分支用于发布稳定版本，dev
   [ssh]
   listen_port = 6000
   auth_token = 123
-
-  # frpc.ini
+  ```
+  
+  ```ini
+   # frpc.ini
   [common]
   server_addr = x.x.x.x
   server_port = 7000
@@ -102,7 +104,7 @@ frp 目前正在前期开发阶段，master 分支用于发布稳定版本，dev
   [ssh]
   local_ip = 127.0.0.1
   local_port = 22
-
+  ```
 
  则通过 ssh 访问内网机器用如下命令（假设登录用户名为 test，当然也可以用putty、shell5等工具软件）：
 
