@@ -14,7 +14,8 @@ frp 是一个高性能的反向代理应用，可以帮助您轻松地进行内�
 * [3、架构](#3架构)
 * [4、使用方法](#4使用方法)
 * [5、配置文件frps.ini、frpc.ini的写法示例](#5配置文件frpsinifrpcini的写法示例)
-    *[5.1、配置文件基本结构](#51配置文件基本结构)
+    * [5.1、配置文件基本结构](#51配置文件基本结构)
+    * [5.2、特权模式--建议新手使用](52特权模式--建议新手使用)
 * [使用示例](#使用示例)
     * [通过 ssh 访问公司内网机器](#通过-ssh-访问公司内网机器)
     * [通过自定义域名访问部署于内网的 web 服务](#通过自定义域名访问部署于内网的-web-服务)
@@ -101,6 +102,12 @@ vhost_https_port = 443
 #虚拟主机ssl加密访问端口，若没有在客户端建立加密网站需求可不填
 subdomain_host = frp.yumi.com
 #你准备用来提供frp服务的域名，可以是主域名也可以是主域名（推荐用"frp.你的域名"方式来提供frp服务，直观明了），但需将其及其子域名泛解析到你的服务器ip上
+dashboard_port = 7500
+#设置frp服务的控制台访问端口为7500，即用frp.yumi.com:7500可以访问到frp服务的控制台
+dashboard_user = admin
+dashboard_pwd = password￥%#￥#%￥
+#设置登录frp服务控制台的登录用户名和密码，防止被所有人滥用
+#dashbord项也是可以不申明的，这样即使是你本人也无法访问控制台了
 
 客户端frpc.ini设置示例：
 # frpc.ini
@@ -114,6 +121,7 @@ privilege_token = 1234
 
 [ssh]
 #定义一个shell代理功能
+type=tcp
 privilege_mode = true
 #申明采用特权模式
 local_ip = 127.0.0.1
@@ -125,6 +133,7 @@ remote_port = 6000
 
 [web]
 #定义一个http代理
+type=http
 privilege_mode = true
 #申明采用特权模式
 local_ip = 192.168.1.11
@@ -138,6 +147,7 @@ subdomain=web
 
 [web01]
 #定义一个http代理
+type=http
 privilege_mode = true
 #申明采用特权模式
 local_ip = 127.0.0.1
@@ -148,6 +158,20 @@ custom_domains = web04.yourdomain.com,yourdomain4.com,yourdomain5.com
 #通过web04.yourdomain.com,yourdomain4.com,yourdomain5.com来访问本机上建立的网站,不同域名之间用","隔开
 subdomain=web01
 #通过web01.yumi.com来访问本机上建立的网站，一次只能指定一个域名
+
+[web02]
+#定义一个https代理
+type=https
+privilege_mode = true
+#申明采用特权模式
+local_ip = 127.0.0.1
+#将访问本机上建立的网站
+local_port = 443
+#本地（客户端）提供https服务的端口为443
+custom_domains = web04.yourdomain.com,yourdomain4.com,yourdomain5.com
+#通过https://web04.yourdomain.com,yourdomain4.com,yourdomain5.com来访问本机上建立的加密网站,不同域名之间用","隔开
+subdomain=web01
+#通过https://web01.yumi.com来访问本机上建立的加密网站，一次只能指定一个域名
 
 ```
 ### 5.3、普通模式
