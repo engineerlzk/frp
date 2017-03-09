@@ -14,6 +14,7 @@ frp 是一个高性能的反向代理应用，可以帮助您轻松地进行内�
 * [3、架构](#3架构)
 * [4、使用方法](#4使用方法)
 * [5、配置文件frps.ini、frpc.ini的写法示例](#5配置文件frpsinifrpcini的写法示例)
+    *[5.1、配置文件基本结构](#51配置文件基本结构)
 * [使用示例](#使用示例)
     * [通过 ssh 访问公司内网机器](#通过-ssh-访问公司内网机器)
     * [通过自定义域名访问部署于内网的 web 服务](#通过自定义域名访问部署于内网的-web-服务)
@@ -81,9 +82,11 @@ frp 目前正在前期开发阶段，master 分支用于发布稳定版本，dev
 [url]#可以实现shell访问、web网站访问、转发DNS查询、url路由等功能，[]内文字可以更改，但指向同一个服务器地址的名称不能重复，最好能够与你对应的服务意义相近，以便于识别。同时，每一类功能在同一个配置文件里都可以设置多个，只要端口号不同（针对ssh等）或域名不同（针对web访问类）即可。下面即分别介绍其写法。
 ### 5.2、特权模式--建议新手使用
 基于frp的设置方式需要分别在服务器端frps.ini和客户端frpc.ini中对应定义有关转发穿透的参数（如穿透的类型是http、https、udp还是tcp等等，服务器端端口、客户端端口等等），而且必须保持一致性，否则将出错，这对于新手来说一开始可能有些难度。
+
 如果想要避免每次增加代理（穿透）都需要同时操作服务器端和客户端，可以启用特权模式。特权模式被启用后，代理（穿透）的所有配置信息都可以在 frpc.ini 中配置，无需在服务器端做任何操作。启用特权模式只需在frps.ini 中设置启用特权模式并设置 privilege_token，客户端需要配置同样的 privilege_token 就能能使用特权模式创建代理。
-服务器端frps.ini设置示例：
+
 ```ini
+服务器端frps.ini设置示例：
 # frps.ini
 [common]
 bind_port = 7000
@@ -92,6 +95,13 @@ privilege_mode = true
 #启动特权模式
 privilege_token = 1234
 #设置特权密码为1234
+vhost_http_port = 80
+#虚拟主机访问端口，若没有在客户端建立网站需求可不填
+vhost_https_port = 443
+#虚拟主机ssl加密访问端口，若没有在客户端建立加密网站需求可不填
+subdomain_host = frp.yumi.com
+#你准备用来提供frp服务的域名，可以是主域名也可以是主域名（推荐用"frp.你的域名"方式来提供frp服务，直观明了），但需将其及其子域名泛解析到你的服务器ip上
+
 客户端frpc.ini设置示例：
 # frpc.ini
 [common]
@@ -112,6 +122,33 @@ local_port = 22
 #本地（客户端）提供shell服务的端口为22
 remote_port = 6000
 #服务器端的端口为6000，如此设置后，则以x.x.x.x:6000方式即可实现对客户端（127.0.0.1或其它IP地址如192.168.1.11对应主机）的shell访问
+
+[web]
+#定义一个http代理
+privilege_mode = true
+#申明采用特权模式
+local_ip = 192.168.1.11
+#将访问192.168.1.11主机上建立的网站，该主机应该与运行frpc客户端的主机在同一局域网内
+local_port = 80
+#本地（客户端）提供http服务的端口为80
+custom_domains = web01.yourdomain.com,yourdomain2.com,yourdomain3.com
+#通过web01.yourdomain.com,yourdomain2.com,yourdomain3.com来访问192.168.1.11上建立的网站,不同域名之间用","隔开
+subdomain=web
+#通过web.yumi.com来访问192.168.1.11上建立的网站，一次只能指定一个域名
+
+[web01]
+#定义一个http代理
+privilege_mode = true
+#申明采用特权模式
+local_ip = 127.0.0.1
+#将访问本机上建立的网站
+local_port = 80
+#本地（客户端）提供http服务的端口为80
+custom_domains = web04.yourdomain.com,yourdomain4.com,yourdomain5.com
+#通过web04.yourdomain.com,yourdomain4.com,yourdomain5.com来访问本机上建立的网站,不同域名之间用","隔开
+subdomain=web01
+#通过web01.yumi.com来访问本机上建立的网站，一次只能指定一个域名
+
 ```
 ### 5.3、普通模式
 ### 5.4、混合模式
